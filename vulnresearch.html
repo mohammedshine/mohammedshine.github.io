@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerability Reports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        .vulnerability {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .vulnerability h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .vulnerability p {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        .vulnerability p:first-of-type {
+            margin-top: 0;
+        }
+        .vulnerability p:last-of-type {
+            margin-bottom: 0;
+        }
+        .vulnerability ul {
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
+        .vulnerability ul li {
+            list-style-type: square;
+            margin-left: 20px;
+            margin-bottom: 5px;
+        }
+        .vulnerability .reference {
+            margin-top: 10px;
+        }
+        .vulnerability .reference a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .vulnerability .reference a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="vulnerability">
+        <h2>CVE-2022-34560</h2>
+        <p>A cross-site scripting (XSS) vulnerability in PHPFox v4.8.9 allows attackers to execute arbitrary web scripts or HTML via a crafted payload injected into the History parameter.</p>
+        <ul>
+            <li><strong>Vulnerability Type:</strong> Cross Site Scripting (XSS)</li>
+            <li><strong>Vendor of Product:</strong> phpFox LLC</li>
+            <li><strong>Affected Product Code Base:</strong> phpfox - 4.8.9</li>
+            <li><strong>Affected Component:</strong> /search/?q=<u>shine<%2Fu>&view=ynblog&encode=1&history="/><script>alert("XSS")</script></li>
+            <li><strong>Attack Type:</strong> Remote</li>
+            <li><strong>Impact Code execution:</strong> true</li>
+            <li><strong>CVE Impact Other:</strong> Reflected cross site scripting</li>
+            <li><strong>Attack Vectors:</strong>
+                <ol>
+                    <li>To exploit the vulnerability the user needs to be authenticated first. Then send the crafted URL to the user. i.e site.com//search/?q=&lt;u&gt;shine&lt;%2Fu&gt;&view=ynblog&encode=1&history="/&gt;&lt;script&gt;alert("XSS")&lt;/script&gt;</li>
+                </ol>
+            </li>
+            <li class="reference"><strong>Reference:</strong> <a href="https://cwe.mitre.org/data/definitions/79.html">https://cwe.mitre.org/data/definitions/79.html</a></li>
+            <li><strong>Discoverer:</strong> Mohammed Shine, Shibin B Shaji and Vishnu Prasad PG from UST Security Research Team</li>
+        </ul>
+    </div>
+
+    <div class="vulnerability">
+        <h2>CVE-2022-34561</h2>
+        <p>A cross-site scripting (XSS) vulnerability in PHPFox v4.8.9 allows attackers to execute arbitrary web scripts or HTML via a crafted payload injected into the video description parameter.</p>
+        <ul>
+            <li><strong>Vulnerability Type:</strong> Cross Site Scripting (XSS)</li>
+            <li><strong>Vendor of Product:</strong> phpFox LLC</li>
+            <li><strong>Affected Product Code Base:</strong> phpfox - 4.8.9</li>
+            <li><strong>Affected Component:</strong> /ultimatevideo</li>
+            <li><strong>Attack Type:</strong> Remote</li>
+            <li><strong>Impact Code execution:</strong> true</li>
+            <li><strong>CVE Impact Other:</strong> Stored Cross Site Scripting</li>
+            <li><strong>Attack Vectors:</strong>
+                <ol>
+                    <li>Upload any video</li>
+                    <li>Edit Video description</li>
+                    <li>Put payload as &lt;img src/onerror=prompt(document.domain)&gt;</li>
+                </ol>
+            </li>
+            <li class="reference"><strong>Reference:</strong> <a href="https://v4.phpfox.com/">https://v4.phpfox.com/</a></li>
+            <li><strong>Discoverer:</strong> Mohammed Shine, Shibin B Shaji and Vishnu Prasad PG from UST Security Research Team</li>
+        </ul>
+    </div>
+
+    <div class="vulnerability">
+        <h2>CVE-2022-34562</h2>
+        <p>A cross-site scripting (XSS) vulnerability in PHPFox v4.8.9 allows attackers to execute arbitrary web scripts or HTML via a crafted payload injected into the status box.</p>
+        <ul>
+            <li><strong>Vulnerability Type:</strong> Cross Site Scripting (XSS)</li>
+            <li><strong>Vendor of Product:</strong> phpFox LLC</li>
+            <li><strong>Affected Product Code Base:</strong> phpfox - 4.8.9</li>
+            <li><strong>Affected Component:</strong> Status</li>
+            <li><strong>Attack Type:</strong> Remote</li>
+            <li><strong>Impact Code execution:</strong> true</li>
+            <li><strong>CVE Impact Other:</strong> Stored Cross Site Scripting</li>
+            <li><strong>Attack Vectors:</strong>
+                <ol>
+                    <li>Create a post and enter an XSS payload.</li>
+                    <li>Mention a user in the comments.</li>
+                    <li>The user will get notification and will try to view the post which will trigger the XSS.</li>
+                </ol>
+            </li>
+            <li class="reference"><strong>Reference:</strong> <a href="https://v4.phpfox.com/">https://v4.phpfox.com/</a></li>
+            <li><strong>Discoverer:</strong> Mohammed Shine, Shibin B Shaji and Vishnu Prasad PG from UST Security Research Team</li>
+        </ul>
+    </div>
+</body>
+</html>
