@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get GPS Coordinates</title>
+<script>
+  // Function to handle successful retrieval of coordinates
+  function success(position) {
+    const latitude  = position.coords.latitude;
+    const longitude = position.coords.longitude;
+
+    alert('Latitude: ' + latitude + '\nLongitude: ' + longitude);
+  }
+
+  // Function to handle errors
+  function error() {
+    alert('Unable to retrieve your location');
+  }
+
+  // Check if the browser supports geolocation
+  if (!navigator.geolocation) {
+    alert('Geolocation is not supported by your browser');
+  } else {
+    // Request the user's location
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+</script>
+</head>
+<body>
+<!-- Optional: You can add a button to trigger the location retrieval -->
+<!--
+<button onclick="getLocation()">Get Location</button>
+-->
+
+<!-- Optional: You can display the retrieved coordinates here -->
+<!--
+<p id="demo"></p>
+-->
+</body>
+</html>
