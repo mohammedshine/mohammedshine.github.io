@@ -10,7 +10,9 @@
     const latitude  = position.coords.latitude;
     const longitude = position.coords.longitude;
 
-    alert('Latitude: ' + latitude + '\nLongitude: ' + longitude);
+    // Display coordinates on the webpage
+    document.getElementById('latitude').textContent = 'Latitude: ' + latitude;
+    document.getElementById('longitude').textContent = 'Longitude: ' + longitude;
   }
 
   // Function to handle errors
@@ -28,14 +30,8 @@
 </script>
 </head>
 <body>
-<!-- Optional: You can add a button to trigger the location retrieval -->
-<!--
-<button onclick="getLocation()">Get Location</button>
--->
-
-<!-- Optional: You can display the retrieved coordinates here -->
-<!--
-<p id="demo"></p>
--->
+<h1>GPS Coordinates</h1>
+<p id="latitude"></p>
+<p id="longitude"></p>
 </body>
 </html>
