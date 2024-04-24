@@ -3,35 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Geo Loc</title>
+<title>Get GPS Coordinates</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+  }
+
+  .container {
+    text-align: center;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+
+  #latitude, #longitude {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Get GPS Coordinates</h1>
+  <button onclick="getLocation()">Get Location</button>
+  <p id="latitude"></p>
+  <p id="longitude"></p>
+</div>
+
 <script>
-  // Function to handle successful retrieval of coordinates
-  function success(position) {
-    const latitude  = position.coords.latitude;
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+      alert('Geolocation is not supported by this browser.');
+    }
+  }
+
+  function showPosition(position) {
+    const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
 
-    // Display coordinates on the webpage
     document.getElementById('latitude').textContent = 'Latitude: ' + latitude;
     document.getElementById('longitude').textContent = 'Longitude: ' + longitude;
   }
 
-  // Function to handle errors
-  function error() {
-    alert('Unable to retrieve your location');
-  }
-
-  // Check if the browser supports geolocation
-  if (!navigator.geolocation) {
-    alert('Geolocation is not supported by your browser');
-  } else {
-    // Request the user's location
-    navigator.geolocation.getCurrentPosition(success, error);
+  function showError(error) {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        alert('User denied the request for Geolocation.');
+        break;
+      case error.POSITION_UNAVAILABLE:
+        alert('Location information is unavailable.');
+        break;
+      case error.TIMEOUT:
+        alert('The request to get user location timed out.');
+        break;
+      case error.UNKNOWN_ERROR:
+        alert('An unknown error occurred.');
+        break;
+    }
   }
 </script>
-</head>
-<body>
-<h1>GPS Coordinates</h1>
-<p id="latitude"></p>
-<p id="longitude"></p>
 </body>
 </html>
