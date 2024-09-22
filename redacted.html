@@ -93,14 +93,14 @@
         <div class="highlight">
             <strong>Affected URL:</strong> <code>http://host:8888/admin/journeys.php</code><br>
             <strong>Description:</strong> The "New Journey" field accepts unsanitized user inputs. Attackers can inject persistent JavaScript payloads, which are executed when the page is viewed by authenticated users.<br>
-            <strong>Example Payload:</strong> <code>" /><img src=x onerror=alert(1)></code>
+            <strong>Example Payload:</strong> <code>&quot;/&gt;&lt;img src&#x3D;x onerror&#x3D;alert(1)&gt;</code>
         </div>
 
         <h3>2. Reflected Cross-Site Scripting (XSS)</h3>
         <div class="highlight">
             <strong>Affected URLs:</strong><br>
-            <code>http://host:8888/admin/abrp.php?carid="><img src=x onerror=alert(1)></code><br>
-            <code>http://host:8888/wakeup.php?id=shine"/><script>alert(1)</script></code><br>
+            <code>http://host:8888/admin/abrp.php?carid&#x3D;&quot;&gt;&lt;img src&#x3D;x onerror&#x3D;alert(1)&gt;</code><br>
+            <code>http://host:8888/wakeup.php?id&#x3D;shine&quot;/&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code><br>
             <strong>Description:</strong> The <code>carid</code> and <code>id</code> parameters do not properly validate input, allowing scripts to be reflected back to the victim’s browser and executed.
         </div>
     </div>
