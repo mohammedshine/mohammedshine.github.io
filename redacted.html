@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Advisory: TeslaLogger XSS Vulnerabilities</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border: 2px solid #04943c;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #04943c;
+            text-align: center;
+        }
+        h2 {
+            color: #04943c;
+            border-bottom: 2px solid #04943c;
+            padding-bottom: 10px;
+        }
+        p, li {
+            line-height: 1.6;
+        }
+        ul {
+            list-style: square;
+            margin-left: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .vulnerable-urls {
+            background-color: #eaf6e9;
+            padding: 10px;
+            border-left: 4px solid #04943c;
+        }
+        .code {
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-family: monospace;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Security Advisory</h1>
+
+    <h2>Title: Stored and Reflected Cross-Site Scripting (XSS) Vulnerabilities in TeslaLogger Admin Panel</h2>
+
+    <p><strong>Advisory ID:</strong> TL-2024-001</p>
+    <p><strong>Date:</strong> 18-May-2024</p>
+    <p><strong>Severity:</strong> High</p>
+    <p><strong>CVE ID:</strong> Pending Assignment</p>
+    <p><strong>Affected Versions:</strong> TeslaLogger Admin Panel versions below 1.59.6</p>
+    <p><strong>Patched Version:</strong> 1.59.6</p>
+    <p><strong>Impact:</strong> Unauthorized actions, session hijacking, data theft</p>
+    <p><strong>Attack Vector:</strong> Remote</p>
+
+    <h2>Overview</h2>
+    <p>
+        Security researchers have identified multiple cross-site scripting (XSS) vulnerabilities in the TeslaLogger Admin Panel affecting versions below 1.59.6.
+        These vulnerabilities allow attackers to inject malicious JavaScript payloads that can be stored or reflected in various web pages, leading to session hijacking, unauthorized actions, and data theft.
+    </p>
+
+    <h2>Vulnerabilities</h2>
+    <h3 class="section-title">1. Stored Cross-Site Scripting (XSS)</h3>
+    <p><strong>Affected URL:</strong> <span class="vulnerable-urls">http://host:8888/admin/journeys.php</span></p>
+    <p>
+        The "New Journey" field accepts unsanitized user inputs. Attackers can inject persistent JavaScript payloads, which are executed when the page is viewed by authenticated users.
+    </p>
+    <p><strong>Example Payload:</strong></p>
+    <pre class="code">" /><img src=x onerror=alert(1)></pre>
+
+    <h3 class="section-title">2. Reflected Cross-Site Scripting (XSS)</h3>
+    <p><strong>Affected URLs:</strong></p>
+    <div class="vulnerable-urls">
+        <ul>
+            <li>http://host:8888/admin/abrp.php?carid="><img+src=x+onerror=alert(1)></li>
+            <li>http://host:8888/wakeup.php?id=shine"/><script>alert(1)</script></li>
+        </ul>
+    </div>
+    <p>
+        The <code>carid</code> and <code>id</code> parameters do not properly validate input. Attackers can inject malicious scripts that are reflected back to the victim’s browser and executed when the URLs are accessed.
+    </p>
+
+    <h2>Impact</h2>
+    <p>
+        Exploiting these vulnerabilities can allow attackers to:
+    </p>
+    <ul>
+        <li>Steal session cookies or credentials</li>
+        <li>Deface web pages</li>
+        <li>Execute arbitrary actions on behalf of authenticated users</li>
+        <li>Perform unauthorized data access</li>
+    </ul>
+
+    <h2>Remediation</h2>
+    <p>
+        It is highly recommended to update TeslaLogger Admin Panel to version 1.59.6 or later. Ensure proper input validation and sanitization, and apply appropriate encoding of user inputs before rendering them in HTML or JavaScript contexts.
+    </p>
+</div>
+
+</body>
+</html>
