@@ -1,113 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Generator</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* CSS styles to format the invoice */
+        .invoice {
+            border: 1px solid #ccc;
             padding: 20px;
         }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
+        .invoice-header {
+            text-align: center;
         }
 
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+        .invoice-body {
+            margin-top: 20px;
         }
 
-        button {
-            padding: 10px 15px;
-            background-color: #04943c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .invoice-footer {
+            text-align: right;
+            margin-top: 20px;
         }
 
-        button:hover {
-            background-color: #037835;
+        /* Hide input borders when printing */
+        @media print {
+            input {
+                border: none !important;
+                outline: none !important;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="invoice">
+        <div class="invoice-header">
+            <h1>Your Company Name</h1>
+            <p>Address: 123 Main Street, City, State, ZIP</p>
+            <p>Phone: (123) 456-7890</p>
+            <p>Email: yourcompany@example.com</p>
+        </div>
 
-<div class="container">
-    <h2>Invoice Generator</h2>
+        <div class="invoice-body">
+            <h2>Invoice #1234</h2>
+            <p>Date: 2023-12-31</p>
 
-    <label for="invoiceNumber">Invoice Number:</label>
-    <input type="text" id="invoiceNumber" placeholder="Enter invoice number">
+            <label for="customer-name">Customer Name:</label>
+            <input type="text" id="customer-name" name="customer-name"><br>
 
-    <label for="customerName">Customer Name:</label>
-    <input type="text" id="customerName" placeholder="Enter customer name">
+            <table id="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3"><strong>Subtotal:</strong></td>
+                        <td id="subtotal">0.00</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><strong>Tax (10%):</strong></td>
+                        <td id="tax">0.00</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><strong>Total:</strong></td>
+                        <td id="total">0.00</td>
+                    </tr>
+                </tfoot>
+            </table>
 
-    <label for="items">Items:</label>
-    <textarea id="items" rows="5" placeholder="Enter items (e.g. Item 1: $10, Item 2: $15)"></textarea>
+            <button onclick="addRow()">Add Row</button>
+            <button onclick="calculateTotal()">Calculate Total</button>
+            <button onclick="window.print()">Print Invoice</button>
+        </div>
+    </div>
 
-    <label for="totalAmount">Total Amount:</label>
-    <input type="text" id="totalAmount" placeholder="Enter total amount">
+    <script>
+        // JavaScript code for dynamic invoice generation
+        const invoiceTable = document.getElementById('invoice-table').querySelector('tbody');
+        const subtotalCell = document.getElementById('subtotal');
+        const taxCell = document.getElementById('tax');
+        const totalCell = document.getElementById('total');
 
-    <button id="generatePdf">Download Invoice as PDF</button>
-</div>
+        function addRow() {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" name="product-name"></td>
+                <td><input type="number" name="quantity"></td>
+                <td><input type="number" name="price"></td>
+                <td><span class="total">0.00</span></td>
+            `;
+            invoiceTable.appendChild(row);
+        }
 
-<!-- jsPDF library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        function calculateTotal() {
+            let subtotal = 0;
+            let taxRate = 0.1; // Adjust tax rate as needed
 
-<script>
-    document.getElementById('generatePdf').addEventListener('click', function() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+            invoiceTable.querySelectorAll('tr').forEach(row => {
+                const quantity = parseInt(row.querySelector('[name="quantity"]').value);
+                const price = parseFloat(row.querySelector('[name="price"]').value);
+                const total = quantity * price;
+                row.querySelector('.total').textContent = total.toFixed(2);
+                subtotal += total;
+            });
 
-        // Get the input values
-        const invoiceNumber = document.getElementById('invoiceNumber').value;
-        const customerName = document.getElementById('customerName').value;
-        const itemsInput = document.getElementById('items').value;
-        const totalAmount = document.getElementById('totalAmount').value;
-
-        // Split the items input by line breaks
-        const items = itemsInput.split('\n').map(item => {
-            const parts = item.split(':');
-            return {
-                description: parts[0] ? parts[0].trim() : '',
-                price: parts[1] ? parts[1].trim() : ''
-            };
-        }).filter(item => item.description && item.price); // filter out any empty entries
-
-        // Set the PDF title and content
-        doc.text(20, 20, `Invoice Number: ${invoiceNumber}`);
-        doc.text(20, 30, `Customer Name: ${customerName}`);
-
-        // Draw table header
-        doc.text(20, 50, 'Items:');
-        let startY = 60;
-        const rowHeight = 10;
-
-        // Set table column headers
-        doc.text(20, startY, 'Description');
-        doc.text(150, startY, 'Price');
-
-        // Draw table rows
-        items.forEach((item, index) => {
-            startY += rowHeight;
-            doc.text(20, startY, item.description);
-            doc.text(150, startY, item.price);
-        });
-
-        // Total Amount
-        startY += rowHeight + 5; // add some space after the items table
-        doc.text(20, startY, `Total Amount: ${totalAmount}`);
-
-        // Save the PDF
-        doc.save('invoice.pdf');
-    });
-</script>
-
+            subtotalCell.textContent = subtotal.toFixed(2);
+            taxCell.textContent = (subtotal * taxRate).toFixed(2);
+            totalCell.textContent = (subtotal + (subtotal * taxRate)).toFixed(2);
+        }
+    </script>
 </body>
 </html>
