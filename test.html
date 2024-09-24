@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #04943c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #037835;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Invoice Generator</h2>
+
+    <label for="invoiceNumber">Invoice Number:</label>
+    <input type="text" id="invoiceNumber" placeholder="Enter invoice number">
+
+    <label for="customerName">Customer Name:</label>
+    <input type="text" id="customerName" placeholder="Enter customer name">
+
+    <label for="items">Items:</label>
+    <textarea id="items" rows="5" placeholder="Enter items (e.g. Item 1: $10, Item 2: $15)"></textarea>
+
+    <label for="totalAmount">Total Amount:</label>
+    <input type="text" id="totalAmount" placeholder="Enter total amount">
+
+    <button id="generatePdf">Download Invoice as PDF</button>
+</div>
+
+<!-- jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+    document.getElementById('generatePdf').addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Get the input values
+        const invoiceNumber = document.getElementById('invoiceNumber').value;
+        const customerName = document.getElementById('customerName').value;
+        const itemsInput = document.getElementById('items').value;
+        const totalAmount = document.getElementById('totalAmount').value;
+
+        // Split the items input by line breaks
+        const items = itemsInput.split('\n').map(item => {
+            const parts = item.split(':');
+            return {
+                description: parts[0] ? parts[0].trim() : '',
+                price: parts[1] ? parts[1].trim() : ''
+            };
+        }).filter(item => item.description && item.price); // filter out any empty entries
+
+        // Set the PDF title and content
+        doc.text(20, 20, `Invoice Number: ${invoiceNumber}`);
+        doc.text(20, 30, `Customer Name: ${customerName}`);
+
+        // Draw table header
+        doc.text(20, 50, 'Items:');
+        let startY = 60;
+        const rowHeight = 10;
+
+        // Set table column headers
+        doc.text(20, startY, 'Description');
+        doc.text(150, startY, 'Price');
+
+        // Draw table rows
+        items.forEach((item, index) => {
+            startY += rowHeight;
+            doc.text(20, startY, item.description);
+            doc.text(150, startY, item.price);
+        });
+
+        // Total Amount
+        startY += rowHeight + 5; // add some space after the items table
+        doc.text(20, startY, `Total Amount: ${totalAmount}`);
+
+        // Save the PDF
+        doc.save('invoice.pdf');
+    });
+</script>
+
+</body>
+</html>
