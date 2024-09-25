@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Generator</title>
     <style>
         /* CSS styles to format the invoice */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
         .invoice {
             border: 1px solid #ccc;
             padding: 20px;
@@ -11,6 +17,10 @@
 
         .invoice-header {
             text-align: center;
+        }
+
+        .invoice-header img {
+            width: 100px; /* Adjust logo size */
         }
 
         .invoice-body {
@@ -22,27 +32,89 @@
             margin-top: 20px;
         }
 
-        /* Hide input borders when printing */
+        /* Update theme color */
+        h1, h2, p, label, th, td {
+            color: #07943f;
+        }
+
+        /* Make textboxes shorter */
+        input[type="text"] {
+            width: 150px; /* Adjust the width as needed */
+        }
+
+        /* Hide input borders and buttons when printing */
         @media print {
             input {
                 border: none !important;
                 outline: none !important;
             }
+            button {
+                display: none !important;
+            }
+            #invoice-table th.action-column, #invoice-table td.action-column {
+                display: none !important; /* Hide the entire column */
+            }
+        }
+
+        /* Responsive table styles */
+        .invoice-body table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+
+        .invoice-body table th, .invoice-body table td {
+            padding: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .invoice-body table input {
+            width: 100%; /* Make input fields fill the entire cell */
+            box-sizing: border-box; /* Include padding and border in width calculation */
+        }
+
+        /* Style for the remove button */
+        .remove-button {
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Style for the buttons */
+        .invoice-footer button {
+            background-color: #07943f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px; /* Add spacing between buttons */
+        }
+
+        .invoice-footer button:hover {
+            background-color: #066c31;
         }
     </style>
 </head>
 <body>
     <div class="invoice">
         <div class="invoice-header">
-            <h1>Your Company Name</h1>
-            <p>Address: 123 Main Street, City, State, ZIP</p>
+            <img src="/img/logo.png" alt="Company Logo">
+            <h1>GreenFort Materials</h1>
+            <p>Hamza's Thekathil Kada Junction,<br> Kaniyapuram P.O, <br>Thiruvananthapuram.</p>
+            <p>695301</p>
             <p>Phone: (123) 456-7890</p>
             <p>Email: yourcompany@example.com</p>
         </div>
 
         <div class="invoice-body">
-            <h2>Invoice #1234</h2>
-            <p>Date: 2023-12-31</p>
+            <h2>Invoice #<input type="text" id="invoice-number" name="invoice-number" value="1234"></h2>
+            <p>Date: <input type="date" id="invoice-date" name="invoice-date" required></p>
 
             <label for="customer-name">Customer Name:</label>
             <input type="text" id="customer-name" name="customer-name"><br>
@@ -50,22 +122,30 @@
             <table id="invoice-table">
                 <thead>
                     <tr>
+                        <th>SL. No</th>
                         <th>Product Name</th>
                         <th>Quantity</th>
                         <th>Price</th>
+                        <th>CGST Rate</th>
+                        <th>SGST Rate</th>
                         <th>Total</th>
+                        <th class="action-column">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    </tbody>
+                </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="3"><strong>Subtotal:</strong></td>
                         <td id="subtotal">0.00</td>
                     </tr>
                     <tr>
-                        <td colspan="3"><strong>Tax (10%):</strong></td>
-                        <td id="tax">0.00</td>
+                        <td colspan="3"><strong>CGST:</strong></td>
+                        <td id="cgst-total">0.00</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><strong>SGST:</strong></td>
+                        <td id="sgst-total">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="3"><strong>Total:</strong></td>
@@ -76,43 +156,100 @@
 
             <button onclick="addRow()">Add Row</button>
             <button onclick="calculateTotal()">Calculate Total</button>
+            <button onclick="clearForm()">Clear All</button>
             <button onclick="window.print()">Print Invoice</button>
         </div>
     </div>
 
     <script>
-        // JavaScript code for dynamic invoice generation
+        // JavaScript code for dynamic invoice generation with auto-populating serial number
+        let counter = 1; // Counter to keep track of serial number
+
         const invoiceTable = document.getElementById('invoice-table').querySelector('tbody');
         const subtotalCell = document.getElementById('subtotal');
-        const taxCell = document.getElementById('tax');
+        const cgstTotalCell = document.getElementById('cgst-total');
+        const sgstTotalCell = document.getElementById('sgst-total');
         const totalCell = document.getElementById('total');
 
         function addRow() {
             const row = document.createElement('tr');
             row.innerHTML = `
+                <td>${counter++}</td>
                 <td><input type="text" name="product-name"></td>
                 <td><input type="number" name="quantity"></td>
                 <td><input type="number" name="price"></td>
+                <td><input type="number" name="cgst-rate"></td>
+                <td><input type="number" name="sgst-rate"></td>
                 <td><span class="total">0.00</span></td>
+                <td><button class="remove-button">Remove</button></td>
             `;
             invoiceTable.appendChild(row);
+
+            // Add event listener to the remove button
+            row.querySelector('.remove-button').addEventListener('click', function() {
+                row.remove();
+                calculateTotal();
+            });
+
+            // Add event listener to the price input field
+            row.querySelector('[name="price"]').addEventListener('input', function() {
+                calculateTotal();
+            });
         }
 
         function calculateTotal() {
             let subtotal = 0;
-            let taxRate = 0.1; // Adjust tax rate as needed
+            let cgstTotal = 0;
+            let sgstTotal = 0;
 
             invoiceTable.querySelectorAll('tr').forEach(row => {
                 const quantity = parseInt(row.querySelector('[name="quantity"]').value);
                 const price = parseFloat(row.querySelector('[name="price"]').value);
-                const total = quantity * price;
-                row.querySelector('.total').textContent = total.toFixed(2);
+                const cgstRate = parseFloat(row.querySelector('[name="cgst-rate"]').value);
+                const sgstRate = parseFloat(row.querySelector('[name="sgst-rate"]').value);
+
+                // Calculate the price without CGST and SGST
+                const priceWithoutTaxes = price / (1 + cgstRate / 100 + sgstRate / 100);
+
+                // Store the calculated price without taxes for later use
+                row.dataset.priceWithoutTaxes = priceWithoutTaxes.toFixed(2);
+
+                const total = quantity * priceWithoutTaxes;
+                const cgstAmount = (total * cgstRate) / 100;
+                const sgstAmount = (total * sgstRate) / 100;
+
+                row.querySelector('.total').textContent = (total + cgstAmount + sgstAmount).toFixed(2);
+
                 subtotal += total;
+                cgstTotal += cgstAmount;
+                sgstTotal += sgstAmount;
             });
 
             subtotalCell.textContent = subtotal.toFixed(2);
-            taxCell.textContent = (subtotal * taxRate).toFixed(2);
-            totalCell.textContent = (subtotal + (subtotal * taxRate)).toFixed(2);
+            cgstTotalCell.textContent = cgstTotal.toFixed(2);
+            sgstTotalCell.textContent = sgstTotal.toFixed(2);
+            totalCell.textContent = (subtotal + cgstTotal + sgstTotal).toFixed(2);
+        }
+
+        function clearForm() {
+            // Clear the invoice number and date
+            document.getElementById('invoice-number').value = '';
+            document.getElementById('invoice-date').value = '';
+
+            // Clear the customer name
+            document.getElementById('customer-name').value = '';
+
+            // Clear the invoice table
+            invoiceTable.innerHTML = '';
+
+            // Reset totals
+            subtotalCell.textContent = '0.00';
+            cgstTotalCell.textContent = '0.00';
+            sgstTotalCell.textContent = '0.00';
+            totalCell.textContent = '0.00';
+
+            // Reset the counter
+            counter = 1;
         }
     </script>
 </body>
