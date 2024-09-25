@@ -7,24 +7,87 @@
     <style>
         /* CSS styles to format the invoice */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
 
         .invoice {
-            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 20px;
+            max-width: 900px;
+            margin: auto;
         }
 
         .invoice-header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #07943f;
+            padding-bottom: 10px;
+        }
+
+        .invoice-header h1 {
+            color: #07943f;
+            margin: 0;
         }
 
         .invoice-header img {
-            width: 100px; /* Adjust logo size */
+            width: 100px;
         }
 
-        .invoice-body {
+        .invoice-details {
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            color: #333;
+        }
+
+        .invoice-details h2, .invoice-details p {
+            margin: 0;
+        }
+
+        .invoice-details h2 {
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            color: #07943f;
+        }
+
+        .invoice-body table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
+        }
+
+        .invoice-body table th {
+            background-color: #07943f;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .invoice-body table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        .invoice-body table input[type="text"],
+        .invoice-body table input[type="number"] {
+            width: 100%;
+            padding: 5px;
+            border: none;
+            background-color: #f9f9f9;
+        }
+
+        .invoice-body table input:focus {
+            outline: 2px solid #07943f;
         }
 
         .invoice-footer {
@@ -32,14 +95,18 @@
             margin-top: 20px;
         }
 
-        /* Update theme color */
-        h1, h2, p, label, th, td {
-            color: #07943f;
+        .invoice-footer button {
+            background-color: #07943f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-right: 10px;
         }
 
-        /* Make textboxes shorter */
-        input[type="text"] {
-            width: 150px; /* Adjust the width as needed */
+        .invoice-footer button:hover {
+            background-color: #066c31;
         }
 
         /* Hide input borders and buttons when printing */
@@ -52,73 +119,46 @@
                 display: none !important;
             }
             #invoice-table th.action-column, #invoice-table td.action-column {
-                display: none !important; /* Hide the entire column */
+                display: none !important;
             }
         }
 
-        /* Responsive table styles */
-        .invoice-body table {
-            width: 100%;
-            table-layout: fixed;
-            border-collapse: collapse;
-        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .invoice-details {
+                flex-direction: column;
+                gap: 10px;
+            }
 
-        .invoice-body table th, .invoice-body table td {
-            padding: 5px;
-            border: 1px solid #ccc;
-            text-align: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .invoice-body table input {
-            width: 100%; /* Make input fields fill the entire cell */
-            box-sizing: border-box; /* Include padding and border in width calculation */
-        }
-
-        /* Style for the remove button */
-        .remove-button {
-            background-color: red;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* Style for the buttons */
-        .invoice-footer button {
-            background-color: #07943f;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            margin-right: 10px; /* Add spacing between buttons */
-        }
-
-        .invoice-footer button:hover {
-            background-color: #066c31;
+            .invoice-footer {
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="invoice">
         <div class="invoice-header">
+            <div>
+                <h1>GreenFort Materials</h1>
+                <p>Hamza's Thekathil Kada Junction,<br>Kaniyapuram P.O,<br>Thiruvananthapuram, 695301</p>
+                <p>Phone: (123) 456-7890 | Email: yourcompany@example.com</p>
+            </div>
             <img src="/img/logo.png" alt="Company Logo">
-            <h1>GreenFort Materials</h1>
-            <p>Hamza's Thekathil Kada Junction,<br> Kaniyapuram P.O, <br>Thiruvananthapuram.</p>
-            <p>695301</p>
-            <p>Phone: (123) 456-7890</p>
-            <p>Email: yourcompany@example.com</p>
+        </div>
+
+        <div class="invoice-details">
+            <div>
+                <h2>Invoice #<input type="text" id="invoice-number" name="invoice-number" value="1234" style="width: 100px;"></h2>
+                <p>Date: <input type="date" id="invoice-date" name="invoice-date" required></p>
+            </div>
+            <div>
+                <label for="customer-name">Customer Name:</label><br>
+                <input type="text" id="customer-name" name="customer-name" style="width: 250px;">
+            </div>
         </div>
 
         <div class="invoice-body">
-            <h2>Invoice #<input type="text" id="invoice-number" name="invoice-number" value="1234"></h2>
-            <p>Date: <input type="date" id="invoice-date" name="invoice-date" required></p>
-
-            <label for="customer-name">Customer Name:</label>
-            <input type="text" id="customer-name" name="customer-name"><br>
-
             <table id="invoice-table">
                 <thead>
                     <tr>
@@ -126,34 +166,37 @@
                         <th>Product Name</th>
                         <th>Quantity</th>
                         <th>Price</th>
-                        <th>CGST Rate</th>
-                        <th>SGST Rate</th>
+                        <th>CGST Rate (%)</th>
+                        <th>SGST Rate (%)</th>
                         <th>Total</th>
                         <th class="action-column">Action</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Rows added dynamically here -->
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="3"><strong>Subtotal:</strong></td>
+                        <td colspan="6"><strong>Subtotal:</strong></td>
                         <td id="subtotal">0.00</td>
                     </tr>
                     <tr>
-                        <td colspan="3"><strong>CGST:</strong></td>
+                        <td colspan="6"><strong>CGST:</strong></td>
                         <td id="cgst-total">0.00</td>
                     </tr>
                     <tr>
-                        <td colspan="3"><strong>SGST:</strong></td>
+                        <td colspan="6"><strong>SGST:</strong></td>
                         <td id="sgst-total">0.00</td>
                     </tr>
                     <tr>
-                        <td colspan="3"><strong>Total:</strong></td>
+                        <td colspan="6"><strong>Total:</strong></td>
                         <td id="total">0.00</td>
                     </tr>
                 </tfoot>
             </table>
+        </div>
 
+        <div class="invoice-footer">
             <button onclick="addRow()">Add Row</button>
             <button onclick="calculateTotal()">Calculate Total</button>
             <button onclick="clearForm()">Clear All</button>
@@ -181,19 +224,17 @@
                 <td><input type="number" name="cgst-rate"></td>
                 <td><input type="number" name="sgst-rate"></td>
                 <td><span class="total">0.00</span></td>
-                <td><button class="remove-button">Remove</button></td>
+                <td><button class="remove-button" style="background-color: red; color: white;">Remove</button></td>
             `;
             invoiceTable.appendChild(row);
 
-            // Add event listener to the remove button
             row.querySelector('.remove-button').addEventListener('click', function() {
                 row.remove();
                 calculateTotal();
             });
 
-            // Add event listener to the price input field
-            row.querySelector('[name="price"]').addEventListener('input', function() {
-                calculateTotal();
+            row.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', calculateTotal);
             });
         }
 
@@ -203,17 +244,12 @@
             let sgstTotal = 0;
 
             invoiceTable.querySelectorAll('tr').forEach(row => {
-                const quantity = parseInt(row.querySelector('[name="quantity"]').value);
-                const price = parseFloat(row.querySelector('[name="price"]').value);
-                const cgstRate = parseFloat(row.querySelector('[name="cgst-rate"]').value);
-                const sgstRate = parseFloat(row.querySelector('[name="sgst-rate"]').value);
+                const quantity = parseInt(row.querySelector('[name="quantity"]').value) || 0;
+                const price = parseFloat(row.querySelector('[name="price"]').value) || 0;
+                const cgstRate = parseFloat(row.querySelector('[name="cgst-rate"]').value) || 0;
+                const sgstRate = parseFloat(row.querySelector('[name="sgst-rate"]').value) || 0;
 
-                // Calculate the price without CGST and SGST
-                const priceWithoutTaxes = price / (1 + cgstRate / 100 + sgstRate / 100);
-
-                // Store the calculated price without taxes for later use
-                row.dataset.priceWithoutTaxes = priceWithoutTaxes.toFixed(2);
-
+                const priceWithoutTaxes = price / (1 + (cgstRate / 100) + (sgstRate / 100));
                 const total = quantity * priceWithoutTaxes;
                 const cgstAmount = (total * cgstRate) / 100;
                 const sgstAmount = (total * sgstRate) / 100;
@@ -232,23 +268,14 @@
         }
 
         function clearForm() {
-            // Clear the invoice number and date
             document.getElementById('invoice-number').value = '';
             document.getElementById('invoice-date').value = '';
-
-            // Clear the customer name
             document.getElementById('customer-name').value = '';
-
-            // Clear the invoice table
             invoiceTable.innerHTML = '';
-
-            // Reset totals
             subtotalCell.textContent = '0.00';
             cgstTotalCell.textContent = '0.00';
             sgstTotalCell.textContent = '0.00';
             totalCell.textContent = '0.00';
-
-            // Reset the counter
             counter = 1;
         }
     </script>
