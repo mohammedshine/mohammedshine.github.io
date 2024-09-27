@@ -152,6 +152,9 @@
             .tax-invoice-title {
                 display: block;
             }
+            #selected-copy-type {
+                display: block !important;
+            }
         }
 
         .signature-area {
@@ -179,6 +182,13 @@
             margin-top: 10px;
             font-size: 12px;
         }
+
+        #selected-copy-type {
+            display: none; /* Hidden in normal view, shown only in print */
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -187,12 +197,15 @@
 
         <div class="invoice-copy-type">
             <label for="copy-type">Select Copy Type:</label>
-            <select id="copy-type">
+            <select id="copy-type" onchange="updateCopyType()">
                 <option value="Original for Recipient">Original for Recipient</option>
                 <option value="Duplicate for Transporter">Duplicate for Transporter</option>
                 <option value="Duplicate for Supplier">Duplicate for Supplier</option>
             </select>
         </div>
+
+        <!-- Hidden element to show selected copy type during print -->
+        <p id="selected-copy-type"></p>
 
         <div class="invoice-header">
             <div>
@@ -271,18 +284,20 @@
                     </tr>
                     <tr>
                         <td colspan="6"><strong>Total:</strong></td>
-                        <td id="total">0.00</td>
+                        <td id="grand-total">0.00</td>
                     </tr>
                 </tfoot>
             </table>
-            <div>
-                <label for="amount-in-words">Amount in Words:</label>
-                <input type="text" id="amount-in-words" name="amount-in-words" class="amount-in-words" placeholder="Enter amount in words">
-            </div>
-            <div>
-                <label for="remarks">Remarks:</label>
-                <input type="text" id="remarks" name="remarks" class="remarks" placeholder="Enter any remarks">
-            </div>
+        </div>
+
+        <div class="amount-in-words">
+            <label for="amount-in-words">Amount in Words:</label>
+            <input type="text" id="amount-in-words" name="amount-in-words">
+        </div>
+
+        <div class="remarks">
+            <label for="remarks">Remarks:</label>
+            <input type="text" id="remarks" name="remarks">
         </div>
 
         <div class="signature-area">
@@ -300,5 +315,15 @@
             <button>Add Item</button>
         </div>
     </div>
+
+    <script>
+        function updateCopyType() {
+            var copyType = document.getElementById("copy-type").value;
+            document.getElementById("selected-copy-type").textContent = copyType;
+        }
+        
+        // Set the initial value when the page loads
+        updateCopyType();
+    </script>
 </body>
 </html>
