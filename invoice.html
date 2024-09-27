@@ -297,6 +297,8 @@
         </div>
 
         <div class="invoice-footer">
+            <button onclick="calculateTotal()">Calculate</button>
+            <button onclick="clearFields()">Clear</button>
             <button onclick="printInvoice()">Print</button>
             <button onclick="addRow()">Add Item</button>
         </div>
@@ -378,6 +380,32 @@
             // This is a simple conversion. You might want to replace this with a proper function.
             const words = amount.toString(); // Replace with a function to convert number to words
             document.getElementById('amount-in-words').value = words + " only";
+        }
+
+        function calculateTotal() {
+            updateTotal(); // Call the updateTotal function to calculate and display totals
+        }
+
+        function clearFields() {
+            // Clear all fields in the invoice
+            document.getElementById('invoice-number').value = '';
+            document.getElementById('customer-name').value = '';
+            document.getElementById('customer-address').value = '';
+            document.getElementById('vehicle-number').value = '';
+            document.getElementById('remarks').value = '';
+            document.getElementById('amount-in-words').value = '';
+
+
+            const table = document.getElementById('invoice-table').getElementsByTagName('tbody')[0];
+            while (table.rows.length > 0) {
+                table.deleteRow(0); // Clear all rows from the table
+            }
+
+            // Reset total fields
+            document.getElementById('subtotal').textContent = '0.00';
+            document.getElementById('cgst-total').textContent = '0.00';
+            document.getElementById('sgst-total').textContent = '0.00';
+            document.getElementById('total').textContent = '0.00';
         }
     </script>
 </body>
