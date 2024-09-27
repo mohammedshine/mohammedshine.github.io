@@ -142,7 +142,8 @@
                 outline: none !important;
                 background: none !important;
             }
-            button {
+            button, 
+            .invoice-copy-type { /* Hide dropdown and label when printing */
                 display: none !important;
             }
             #invoice-table th.action-column, #invoice-table td.action-column {
@@ -280,11 +281,7 @@
             </div>
             <div>
                 <label for="remarks">Remarks:</label>
-                <input type="text" id="remarks" name="remarks" class="remarks" placeholder="Enter remarks here...">
-            </div>
-            <div>
-                <h3>Bank Details:</h3>
-                <p>Account Name: GreenFort Materials<br>Bank: Green Bank<br>Account Number: 1234567890<br>IFSC: GBIN0012345</p>
+                <input type="text" id="remarks" name="remarks" class="remarks" placeholder="Enter any remarks">
             </div>
         </div>
 
