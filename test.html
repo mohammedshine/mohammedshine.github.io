@@ -26,8 +26,13 @@
             text-align: center;
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             display: none; /* Hidden by default, only shown in print */
+        }
+
+        .invoice-copy-type {
+            text-align: center;
+            margin-bottom: 15px;
         }
 
         .invoice-header {
@@ -178,6 +183,16 @@
 <body>
     <div class="invoice">
         <h2 class="tax-invoice-title">TAX INVOICE</h2>
+
+        <div class="invoice-copy-type">
+            <label for="copy-type">Select Copy Type:</label>
+            <select id="copy-type">
+                <option value="Original for Recipient">Original for Recipient</option>
+                <option value="Duplicate for Transporter">Duplicate for Transporter</option>
+                <option value="Duplicate for Supplier">Duplicate for Supplier</option>
+            </select>
+        </div>
+
         <div class="invoice-header">
             <div>
                 <h1>GreenFort Materials</h1>
@@ -269,21 +284,17 @@
             </div>
             <div>
                 <h3>Bank Details:</h3>
-                <p><strong>Account Holder:</strong>GreenFort Materials</p>
-                <p><strong>Bank Name:</strong>State Bank of India</p>
-                <p><strong>Account Number:</strong>43335895627</p>
-                <p><strong>IFSC Code:</strong>SBIN0070045</p>
+                <p>Account Name: GreenFort Materials<br>Bank: Green Bank<br>Account Number: 1234567890<br>IFSC: GBIN0012345</p>
             </div>
         </div>
 
         <div class="signature-area">
             <div>
-                <p>Authorized Signatory/Name</p>
-                <p>____________________</p>
+                <p>For GreenFort Materials</p>
+                <p>(Authorized Signature)</p>
             </div>
             <div>
-                <p>Seal</p>
-                <p>____________________</p>
+                <p>Customer Signature</p>
             </div>
         </div>
 
