@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator</title>
+    <style>
+        /* CSS styles to format the invoice */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
+
+        .invoice {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            max-width: 800px; /* Reduced width for better printing */
+            margin: auto;
+        }
+
+        .tax-invoice-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: none; /*shows only in PDF */
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #07943f;
+            padding-bottom: 10px;
+        }
+
+        .invoice-header h1 {
+            color: #07943f;
+            margin: 0;
+            font-size: 18px; /* Adjusted font size */
+        }
+
+        .invoice-header img {
+            width: 100px; /* Reduced logo size */
+        }
+
+        .invoice-details {
+            margin: 15px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px; /* Reduced gap for tighter layout */
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            color: #07943f;
+        }
+
+        .invoice-details input[type="text"],
+        .invoice-details input[type="date"],
+        .invoice-details select {
+            font-size: 12px;
+            width: 100%;
+            padding: 5px;
+        }
+
+        .invoice-body {
+            margin-top: 10px; /* Adjusted margin */
+        }
+
+        .invoice-body table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .invoice-body table th {
+            background-color: #07943f;
+            color: white;
+            padding: 6px; /* Reduced padding */
+            text-align: left;
+            font-size: 12px; /* Adjusted font size */
+        }
+
+        .invoice-body table td {
+            padding: 6px; /* Reduced padding */
+            border: 1px solid #ccc;
+            text-align: left;
+            font-size: 12px; /* Adjusted font size */
+        }
+
+        .invoice-body table input[type="text"],
+        .invoice-body table input[type="number"],
+        .invoice-body table select {
+            width: 100%;
+            padding: 4px; /* Reduced padding */
+            border: none;
+            background-color: #f9f9f9;
+            font-size: 12px; /* Consistent font size */
+        }
+
+        .invoice-footer {
+            text-align: right;
+            margin-top: 10px; /* Reduced margin */
+        }
+
+        .invoice-footer button {
+            background-color: #07943f;
+            color: white;
+            padding: 6px 10px; /* Reduced padding */
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+        .invoice-footer button:hover {
+            background-color: #066c31;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .invoice {
+                max-width: none;
+                box-shadow: none;
+            }
+            input, select {
+                border: none !important;
+                outline: none !important;
+                background: none !important;
+            }
+            button {
+                display: none !important;
+            }
+            #invoice-table th.action-column, #invoice-table td.action-column {
+                display: none !important;
+            }
+            .tax-invoice-title {
+            display: block;
+            }
+            #copy-type {
+                display: none !important; /* Hide the dropdown in print */
+            }
+            #selected-copy-type {
+                display: block !important; /* Show the selected value in print */
+            }
+        }
+
+        /* Final area for signature */
+        .signature-area {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 2px solid #07943f;
+            padding-top: 10px;
+        }
+
+        .signature-area div {
+            text-align: center;
+            width: 45%;
+            font-size: 12px; /* Adjusted font size */
+        }
+
+        .amount-in-words {
+            width: 100%;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .remarks {
+            width: 100%;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice">
+        <div class="tax-invoice-title">Tax Invoice</div>
+        <div class="invoice-header">
+            <div>
+                <h1>GreenFort Materials</h1>
+                <p>Hamza's Thekathil Kada Junction,<br>Kaniyapuram P.O,<br>Thiruvananthapuram, 695301</p>
+                <p>Phone: +91 9809289089 | Email: greenfortmaterials@gmail.com</p>
+            </div>
+            <img src="./img/logo.png" alt="Company Logo">
+        </div>
+
+        <div class="invoice-details">
+            <div>
+                <label for="invoice-number">Invoice #:</label>
+                <input type="text" id="invoice-number" name="invoice-number" value="1234">
+            </div>
+            <div>
+                <label for="invoice-date">Date:</label>
+                <input type="date" id="invoice-date" name="invoice-date" required>
+            </div>
+            <div>
+                <label for="customer-name">Customer Name:</label>
+                <input type="text" id="customer-name" name="customer-name">
+            </div>
+            <div>
+                <label for="customer-address">Customer Address:</label>
+                <input type="text" id="customer-address" name="customer-address">
+            </div>
+            <div>
+                <label for="payment-mode">Payment Mode:</label>
+                <select id="payment-mode" name="payment-mode">
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Cheque">Cheque</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                </select>
+            </div>
+            <div>
+                <label for="mode-of-transport">Mode of Transport:</label>
+                <input type="text" id="mode-of-transport" name="mode-of-transport" value="By Road" readonly>
+            </div>
+            <div>
+                <label for="vehicle-number">Vehicle Number:</label>
+                <input type="text" id="vehicle-number" name="vehicle-number">
+            </div>
+            <div>
+                <label for="copy-type">Select Copy Type:</label>
+                <select id="copy-type" onchange="updateCopyType()">
+                    <option value="Original for Recipient">Original for Recipient</option>
+                    <option value="Duplicate for Transporter">Duplicate for Transporter</option>
+                    <option value="Duplicate for Supplier">Duplicate for Supplier</option>
+                </select>
+                <p id="selected-copy-type" style="display: none;"></p> <!-- Hidden element for print -->
+            </div>
+        </div>
+
+        <div class="invoice-body">
+            <table id="invoice-table">
+                <thead>
+                    <tr>
+                        <th>SL. No</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>CGST Rate (%)</th>
+                        <th>SGST Rate (%)</th>
+                        <th>Total</th>
+                        <th class="action-column">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows added dynamically here -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6"><strong>Subtotal:</strong></td>
+                        <td id="subtotal">0.00</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6"><strong>CGST:</strong></td>
+                        <td id="cgst-total">0.00</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6"><strong>SGST:</strong></td>
+                        <td id="sgst-total">0.00</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6"><strong>Total:</strong></td>
+                        <td id="total">0.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div>
+                <label for="amount-in-words">Amount in Words:</label>
+                <input type="text" id="amount-in-words" class="amount-in-words" name="amount-in-words" readonly>
+            </div>
+            <div>
+                <label for="remarks">Remarks:</label>
+                <input type="text" id="remarks" class="remarks" name="remarks">
+            </div>
+        </div>
+
+        <div class="signature-area">
+            <div>
+                <p>Authorized Signature</p>
+                <p>____________________</p>
+            </div>
+            <div>
+                <p>Customer Signature</p>
+                <p>____________________</p>
+            </div>
+        </div>
+
+        <div class="invoice-footer">
+            <button onclick="printInvoice()">Print</button>
+            <button onclick="addRow()">Add Item</button>
+        </div>
+    </div>
+
+    <script>
+        function updateCopyType() {
+            const copyTypeSelect = document.getElementById('copy-type');
+            const selectedCopyType = document.getElementById('selected-copy-type');
+            selectedCopyType.innerText = copyTypeSelect.value; // Update the text to show the selected copy type
+        }
+
+        function printInvoice() {
+            window.print();
+        }
+
+        function addRow() {
+            const table = document.getElementById('invoice-table').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td></td>
+                <td><input type="text" placeholder="Product Name"></td>
+                <td><input type="number" placeholder="Quantity" onchange="updateTotal()"></td>
+                <td><input type="number" placeholder="Price" onchange="updateTotal()"></td>
+                <td><input type="number" placeholder="CGST Rate (%)" onchange="updateTotal()"></td>
+                <td><input type="number" placeholder="SGST Rate (%)" onchange="updateTotal()"></td>
+                <td class="total-cell">0.00</td>
+                <td class="action-column"><button onclick="removeRow(this)">Remove</button></td>
+            `;
+            updateRowNumbers();
+        }
+
+        function removeRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            updateRowNumbers();
+            updateTotal();
+        }
+
+        function updateRowNumbers() {
+            const rows = document.querySelectorAll('#invoice-table tbody tr');
+            rows.forEach((row, index) => {
+                row.cells[0].textContent = index + 1;
+            });
+        }
+
+        function updateTotal() {
+            const table = document.getElementById('invoice-table');
+            let subtotal = 0;
+            let cgst = 0;
+            let sgst = 0;
+
+            for (let i = 1; i < table.rows.length; i++) {
+                const row = table.rows[i];
+                const quantity = row.cells[2].querySelector('input').value;
+                const price = row.cells[3].querySelector('input').value;
+                const cgstRate = row.cells[4].querySelector('input').value;
+                const sgstRate = row.cells[5].querySelector('input').value;
+
+                const total = (quantity * price) || 0;
+                const cgstValue = (total * (cgstRate / 100)) || 0;
+                const sgstValue = (total * (sgstRate / 100)) || 0;
+
+                subtotal += total;
+                cgst += cgstValue;
+                sgst += sgstValue;
+
+                row.cells[6].textContent = (total + cgstValue + sgstValue).toFixed(2);
+            }
+
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('cgst-total').textContent = cgst.toFixed(2);
+            document.getElementById('sgst-total').textContent = sgst.toFixed(2);
+            document.getElementById('total').textContent = (subtotal + cgst + sgst).toFixed(2);
+            updateAmountInWords(subtotal + cgst + sgst);
+        }
+
+        function updateAmountInWords(amount) {
+            // This is a simple conversion. You might want to replace this with a proper function.
+            const words = amount.toString(); // Replace with a function to convert number to words
+            document.getElementById('amount-in-words').value = words + " only";
+        }
+    </script>
+</body>
+</html>
