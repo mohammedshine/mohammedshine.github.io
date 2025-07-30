@@ -1,0 +1,2 @@
+🎉 Easter Egg Found!
+Flag: USTCtf{Good_Luck}
